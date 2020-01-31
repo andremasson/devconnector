@@ -190,7 +190,7 @@ router.put('/experience', [auth, [
         to,
         current,
         description
-    }
+    };
 
     try {
         const profile = await Profile.findOne({ user: req.user.id });
