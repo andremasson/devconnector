@@ -6,6 +6,7 @@ const request = require('request');
 const config = require('config');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const Post = require('../../models/Post');
 
 // @route   GET api/profile/me
 // @desc    Get current user´s profile
@@ -139,7 +140,8 @@ router.get('/user/:user_id', async (req, res) => {
 // @access  Private
 router.delete('/', auth, async (req, res) => {
     try {
-        // @toto - remove user´s posts
+        // Remove user posts
+        await Post.deleteMany({ user: req.user.id });
 
         // Remove profile
         await Profile.findOneAndRemove({ user: req.user.id });
@@ -240,7 +242,7 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 router.put('/education', [auth, [
     check('school', 'School is required').not().isEmpty(),
     check('degree', 'Degree is required').not().isEmpty(),
-    check('fieldofstudy', 'Field of study is required').not().isEmpty(),
+    check('fieldOfStudy', 'Field of study is required').not().isEmpty(),
     check('from', 'From date is required').not().isEmpty()
 ]], async (req, res) => {
     const errors = validationResult(req);
@@ -251,7 +253,7 @@ router.put('/education', [auth, [
     const {
         school,
         degree,
-        fieldofstudy,
+        fieldOfStudy,
         from,
         to,
         current,
@@ -261,7 +263,7 @@ router.put('/education', [auth, [
     const newEdu = {
         school,
         degree,
-        fieldofstudy,
+        fieldOfStudy,
         from,
         to,
         current,
@@ -288,7 +290,7 @@ router.delete('/education/:edu_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.user.id });
 
-        const removeIndex = profile.education.map(item => item.id).indexOf(req.params.exp_id);
+        const removeIndex = profile.education.map(item => item.id).indexOf(req.params.edu_id);
 
         profile.education.splice(removeIndex, 1);
 
