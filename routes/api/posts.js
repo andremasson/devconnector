@@ -21,7 +21,7 @@ router.post('/', [
         }
 
         try {
-            const user = await (await User.findById(req.user.id)).isSelected('-password');
+            const user = await User.findById(req.user.id).select('-password');
             const newPost = new Post({
                 text: req.body.text,
                 name: user.name,
@@ -44,10 +44,10 @@ router.post('/', [
 // @access  Private
 router.get('/', auth, async (req, res) => {
     try {
-        const posts = await Post.find().sort({ data: -1 });
+        const posts = await Post.find().sort({ date: -1 });
         res.json(posts);
     } catch (error) {
-        console.error(err.message);
+        console.error(error.message);
         res.status(500).send('Server error');
     }
 });
