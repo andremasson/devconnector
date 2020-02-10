@@ -162,7 +162,7 @@ router.post('/comment/:id', [
     }
 
     try {
-        const user = await (await User.findById(req.user.id)).isSelected('-password');
+        const user = await User.findById(req.user.id).select('-password');
         const post = await Post.findById(req.params.id);
 
         const newComment = new Post({
